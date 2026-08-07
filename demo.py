@@ -143,6 +143,8 @@ if __name__ == "__main__":
     # sanity check
     parser.add_argument('--thres_box', type=float, default=0.1,
                         help='bbox threshold to reject pairs')
+    parser.add_argument('--thres_rot', type=float, default=0.1,
+                        help='rotation threshold to reject pairs')
 
     # filter unreliable matches
     parser.add_argument('--thres_error', type=float, default=0.1,

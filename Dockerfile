@@ -4,6 +4,7 @@ FROM nvidia/cuda:11.8.0-devel-ubuntu22.04
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
 ENV TORCH_CUDA_ARCH_LIST="7.5 8.0 8.6 8.9"
+ENV FORCE_CUDA=1
 ENV CUDA_HOME=/usr/local/cuda
 
 # Install system dependencies & Python 3.10 (native on Ubuntu 22.04, no PPA needed)
@@ -37,16 +38,27 @@ RUN pip install --no-cache-dir \
 # Install additional Python dependencies required by ICP-Flow
 RUN pip install --no-cache-dir \
     "numpy<2" \
+    "pydantic<2" \
+    "dash==2.9.3" \
     scipy \
     pandas \
     scikit-learn \
     matplotlib \
+    seaborn \
+    plotly \
+    parmap \
+    hdbscan \
+    kiss-icp==0.2.9 \
+    iopath \
+    fvcore \
     pyyaml \
     tqdm \
     requests \
     torchist \
     open3d \
     pybind11
+
+RUN pip install --no-build-isolation --no-cache-dir "git+https://github.com/facebookresearch/pytorch3d.git"
 
 # Set the working directory
 WORKDIR /workspace
