@@ -6,15 +6,14 @@ ENV PYTHONUNBUFFERED=1
 ENV TORCH_CUDA_ARCH_LIST="7.5 8.0 8.6 8.9"
 ENV CUDA_HOME=/usr/local/cuda
 
-# Install system dependencies & Python 3.9 via deadsnakes PPA
+# Install system dependencies & Python 3.10 (native on Ubuntu 22.04, no PPA needed)
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    software-properties-common \
-    && add-apt-repository ppa:deadsnakes/ppa -y \
-    && apt-get update && apt-get install -y --no-install-recommends \
-    python3.9 \
-    python3.9-dev \
-    python3.9-distutils \
+    python3 \
+    python3-dev \
+    python3-pip \
+    python3-venv \
     curl \
+    ca-certificates \
     git \
     build-essential \
     cmake \
@@ -24,20 +23,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
-# Set Python 3.9 as default python
-RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.9 1 \
-    && update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 1
+# Make python3 the default python command
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 1
 
-# Install pip for python3.9
-RUN curl -sS https://bootstrap.pypa.io/pip/3.9/get-pip.py | python3.9
+# Upgrade pip to latest
+RUN python3 -m pip install --no-cache-dir --upgrade pip setuptools wheel
 
 # Install PyTorch with CUDA 11.8 support
 RUN pip install --no-cache-dir \
-    torch==2.4.0 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+    torch==2.4.0 torchvision==0.19.0 torchaudio==2.4.0 \
+    --index-url https://download.pytorch.org/whl/cu118
 
 # Install additional Python dependencies required by ICP-Flow
 RUN pip install --no-cache-dir \
-    numpy \
+    "numpy<2" \
     scipy \
     pandas \
     scikit-learn \
@@ -46,7 +45,7 @@ RUN pip install --no-cache-dir \
     tqdm \
     requests \
     torchist \
-    open3d-cpu \
+    open3d \
     pybind11
 
 # Set the working directory
