@@ -54,8 +54,9 @@ sed -i '/set_target_properties(demo_/d' CMakeLists.txt
 # Run cmake & make inside container using apptainer exec
 srun apptainer exec -B /home/tosinricca/ICP-Flow:/workspace /home/tosinricca/ICP-Flow/icpflow.sif bash -c "
     cd /workspace/patchwork-plusplus && \
+    PYBIND_DIR=\$(python3 -c 'import pybind11; print(pybind11.get_cmake_dir())') && \
     rm -rf build && mkdir -p build && cd build && \
-    cmake .. -DEIGEN3_INCLUDE_DIR=/usr/include/eigen3 -DPYTHON_EXECUTABLE=/usr/bin/python3 && \
+    cmake .. -DEIGEN3_INCLUDE_DIR=/usr/include/eigen3 -DPYTHON_EXECUTABLE=/usr/bin/python3 -Dpybind11_DIR=\$PYBIND_DIR && \
     make -j4
 "
 
